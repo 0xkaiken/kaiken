@@ -1,0 +1,23 @@
+# PLINY COMMAND — dependencies
+#
+# The installer (install.sh / install_windows.py) installs the one hard
+# dependency and nothing else, on purpose: the server, the three dashboards
+# and the gauntlet run on the standard library plus YAML. Everything under
+# "optional" degrades to a clear error on the feature that needs it.
+#
+#   python -m pip install -r requirements.txt
+
+# --- core -------------------------------------------------------------
+pyyaml>=6.0                 # gauntlet presets, targets, behaviors
+
+# --- optional ---------------------------------------------------------
+Pillow>=10.0                # computer-use screenshots, JPEG conversion
+playwright>=1.40            # pw_browser.py (headless Chromium HTTP API)
+playwright-stealth>=2.0     # pw_browser.py stealth patches
+anthropic>=0.40             # computer_use.py (Claude computer use)
+pytest>=7.0                 # tests/
+
+# --- not installed here -----------------------------------------------
+# PyRIT        installs into organs/pyrit/.venv at runtime (MIT)
+# P4RS3LT0NGV3 clones into organs/p4rs3lt0ngv3 at runtime (AGPL-3.0)
+# claude CLI   required only for the local Anthropic target

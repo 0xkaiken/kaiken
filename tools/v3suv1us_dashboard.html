@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V3SUV1US — campaign scorecards</title>
+<style>
+  :root {
+    --bg: #07070a;
+    --panel: #0e0e14;
+    --line: #1e1e2a;
+    --text: #e8e8f0;
+    --dim: #8a8aa0;
+    --accent: #ff5c00;
+    --accent-2: #00d6a3;
+    --warn: #ffcc00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  header {
+    padding: 18px 24px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; gap: 14px;
+    position: sticky; top: 0; background: rgba(7,7,10,.94); backdrop-filter: blur(6px);
+  }
+  h1 { font-size: 16px; margin: 0; letter-spacing: .16em; color: var(--accent); }
+  .sub { color: var(--dim); font-size: 12px; }
+  main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  section { margin-bottom: 34px; }
+  h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .18em;
+    color: var(--dim); margin: 0 0 12px; border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .card h3 { margin: 0 0 10px; font-size: 13px; color: var(--accent-2); word-break: break-word; }
+  .kv { display: grid; grid-template-columns: minmax(80px, 40%) 1fr; gap: 4px 10px; font-size: 12px; }
+  .kv dt { color: var(--dim); }
+  .kv dd { margin: 0; word-break: break-word; }
+  .score { font-size: 26px; font-weight: 700; color: var(--accent); }
+  .empty {
+    border: 1px dashed var(--line); border-radius: 8px; padding: 26px;
+    color: var(--dim); text-align: center;
+  }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; color: var(--dim); font-size: 12px; }
+  pre {
+    background: #05050a; border: 1px solid var(--line); border-radius: 6px;
+    padding: 10px; overflow: auto; font-size: 11px; max-height: 320px;
+  }
+  .bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+  button {
+    background: transparent; color: var(--dim); border: 1px solid var(--line);
+    border-radius: 6px; padding: 5px 10px; font: inherit; font-size: 12px; cursor: pointer;
+  }
+  button:hover { color: var(--text); border-color: var(--accent); }
+  footer { color: var(--dim); font-size: 11px; padding: 0 24px 30px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>V3SUV1US</h1>
+  <span class="sub" id="status">loading campaign data…</span>
+  <span style="flex:1"></span>
+  <button id="refresh">refresh</button>
+  <a href="/" style="color:var(--dim);font-size:12px;text-decoration:none">← mission control</a>
+</header>
+
+<main>
+  <section>
+    <h2>Scorecards <span id="sc-count" class="sub"></span></h2>
+    <div id="scorecards" class="grid"></div>
+  </section>
+  <section>
+    <h2>Campaigns <span id="cp-count" class="sub"></span></h2>
+    <div id="campaigns" class="grid"></div>
+  </section>
+</main>
+
+<footer>
+  reads <code>tools/v3suv1us_results/*_scorecard.json</code> and
+  <code>tools/v3suv1us_campaigns/campaign_*.json</code> from the workshop
+</footer>
+
+<script>
+const NAME_KEYS = ["name", "model", "target", "title", "id", "campaign"];
+const SCORE_KEYS = ["score", "asr", "grade", "success_rate", "compliance", "overall"];
+
+function pick(obj, keys, dflt) {
+  for (const k of keys) {
+    if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
+  }
+  return dflt;
+}
+
+function num(v) {
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    const m = v.match(/-?\d+(\.\d+)?/);
+    if (m) return parseFloat(m[0]);
+  }
+  return null;
+}
+
+function renderCard(obj) {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const title = document.createElement("h3");
+  title.textContent = String(pick(obj, NAME_KEYS, "untitled"));
+  card.appendChild(title);
+
+  const raw = num(pick(obj, SCORE_KEYS, null));
+  if (raw !== null) {
+    const s = document.createElement("div");
+    s.className = "score";
+    s.textContent = raw.toString();
+    card.appendChild(s);
+
+    const pct = raw <= 1 ? raw * 100 : Math.min(100, raw);
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("i");
+    fill.style.width = Math.max(2, pct) + "%";
+    bar.appendChild(fill);
+    card.appendChild(bar);
+  }
+
+  const dl = document.createElement("dl");
+  dl.className = "kv";
+  const skip = new Set([...NAME_KEYS, ...SCORE_KEYS]);
+  let shown = 0;
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (skip.has(k) || v === null || v === undefined) continue;
+    if (typeof v === "object") continue;
+    const dt = document.createElement("dt");
+    dt.textContent = k;
+    const dd = document.createElement("dd");
+    dd.textContent = String(v).slice(0, 220);
+    dl.append(dt, dd);
+    shown++;
+    if (shown >= 8) break;
+  }
+  if (shown) card.appendChild(dl);
+
+  const det = document.createElement("details");
+  const sum = document.createElement("summary");
+  sum.textContent = "raw json";
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(obj, null, 2);
+  det.append(sum, pre);
+  card.appendChild(det);
+  return card;
+}
+
+function fill(id, items, emptyMsg) {
+  const host = document.getElementById(id);
+  host.textContent = "";
+  if (!items.length) {
+    const e = document.createElement("div");
+    e.className = "empty";
+    e.textContent = emptyMsg;
+    host.appendChild(e);
+    return;
+  }
+  for (const item of items) host.appendChild(renderCard(item));
+}
+
+async function load() {
+  const status = document.getElementById("status");
+  status.textContent = "loading…";
+  try {
+    const res = await fetch("/api/v3suv1us/data", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const cards = Array.isArray(data.scorecards) ? data.scorecards : [];
+    const camps = Array.isArray(data.campaigns) ? data.campaigns : [];
+    fill("scorecards", cards,
+         "no scorecards yet — drop *_scorecard.json into tools/v3suv1us_results/");
+    fill("campaigns", camps,
+         "no campaigns yet — drop campaign_*.json into tools/v3suv1us_campaigns/");
+    document.getElementById("sc-count").textContent = "(" + cards.length + ")";
+    document.getElementById("cp-count").textContent = "(" + camps.length + ")";
+    status.textContent = "updated " + new Date().toLocaleTimeString();
+  } catch (err) {
+    status.textContent = "error: " + err.message;
+    fill("scorecards", [], "could not read /api/v3suv1us/data");
+    fill("campaigns", [], "could not read /api/v3suv1us/data");
+  }
+}
+
+document.getElementById("refresh").addEventListener("click", load);
+load();
+setInterval(load, 30000);
+</script>
+</body>
+</html>

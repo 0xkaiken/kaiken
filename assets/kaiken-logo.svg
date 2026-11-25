@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" height="160" role="img" aria-label="KAIKEN — 懐剣">
+  <defs>
+    <linearGradient id="urushi-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141210"/>
+      <stop offset="100%" stop-color="#090807"/>
+    </linearGradient>
+    <linearGradient id="gold-rule" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e03e2d"/>
+      <stop offset="45%" stop-color="#c9a35e"/>
+      <stop offset="100%" stop-color="#c9a35e" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="seal-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22100d"/>
+      <stop offset="100%" stop-color="#140907"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Urushi lacquer container (works crisply on both GitHub dark and light themes) -->
+  <rect x="2" y="2" width="636" height="156" rx="18" fill="url(#urushi-bg)" stroke="#2c2823" stroke-width="1.5"/>
+  <rect x="10" y="10" width="620" height="140" rx="12" fill="none" stroke="#1e1b18" stroke-width="1"/>
+
+  <!-- Subtle corner reticle accents -->
+  <path d="M22 30 V22 H30 M610 22 H618 V30 M22 130 V138 H30 M610 138 H618 V130" fill="none" stroke="#3c3730" stroke-width="1.25" stroke-linecap="round"/>
+
+  <!-- Vermilion hanko seal (matches .kaiken-seal in the Urushi UI) -->
+  <rect x="44" y="34" width="92" height="92" rx="18" fill="url(#seal-fill)" stroke="#e03e2d" stroke-width="2.5"/>
+  <rect x="51" y="41" width="78" height="78" rx="12" fill="none" stroke="#e03e2d" stroke-opacity="0.28" stroke-width="1.5"/>
+  <text x="90" y="92" text-anchor="middle" fill="#ec4b3a" font-family="'Noto Serif JP', 'Yu Mincho', 'Hiragino Mincho ProN', 'MS PMincho', Georgia, serif" font-size="36" font-weight="700" letter-spacing="-1">懐剣</text>
+
+  <!-- Wordmark + gold divider + subtitle -->
+  <text x="166" y="84" fill="#efece5" font-family="'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="10">KAIKEN</text>
+  <rect x="166" y="97" width="420" height="2" rx="1" fill="url(#gold-rule)"/>
+  <text x="168" y="121" fill="#a8a298" font-family="'JetBrains Mono', 'Cascadia Mono', Consolas, Menlo, monospace" font-size="11.5" letter-spacing="1.5">AGENT COMMAND · COMPUTER USE · RED-TEAM HARNESS</text>
+
+  <!-- Status dot accent -->
+  <circle cx="586" cy="44" r="4" fill="#e03e2d"/>
+</svg>

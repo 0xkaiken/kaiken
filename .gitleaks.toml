@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Deliberately fake keys in redaction tests"
+regexes = ['''sk-ant-verysecret''', '''sk-or-v1-abcd''']
+paths = ['''vendor/katex/''']

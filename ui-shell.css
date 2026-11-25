@@ -1,0 +1,85 @@
+/* Shared guide drawer and helpers. Loaded by all three dashboards, so every
+   rule here is either scoped to .ui-* or is an accessibility default. */
+:focus-visible { outline: 2px solid #8ab4ff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+.ui-guide-btn {
+  appearance: none; cursor: pointer; white-space: nowrap;
+  background: #1a1a35; color: #e0e0f0;
+  border: 1px solid #3a3a68; border-radius: 6px;
+  padding: 5px 10px;
+  font: 600 12px 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+.ui-guide-btn:hover { background: #26264a; border-color: #5a5a98; }
+
+.ui-info {
+  appearance: none; cursor: pointer; flex-shrink: 0;
+  width: 17px; height: 17px; padding: 0; line-height: 15px; text-align: center;
+  background: transparent; color: #9a9ab8;
+  border: 1px solid #3a3a68; border-radius: 50%;
+  font: 600 11px 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+.ui-info:hover { color: #fff; border-color: #8a8ab8; }
+
+#ui-guide-backdrop {
+  position: fixed; inset: 0; z-index: 99998;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0; pointer-events: none; transition: opacity 0.15s;
+}
+#ui-guide {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 99999;
+  width: min(460px, 100vw);
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 18px 18px 0;
+  background: #0f0f20; color: #d0d0e4;
+  border-left: 1px solid #2e2e58;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.5);
+  font: 400 13px/1.55 'Inter', 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: 0; text-align: left;
+  transform: translateX(100%); visibility: hidden;
+  transition: transform 0.18s ease, visibility 0.18s;
+}
+body.ui-guide-open #ui-guide { transform: none; visibility: visible; }
+body.ui-guide-open #ui-guide-backdrop { opacity: 1; pointer-events: auto; }
+
+.ui-guide-head { display: flex; align-items: center; justify-content: space-between; }
+.ui-guide-head h2 { margin: 0; font-size: 18px; font-weight: 700; color: #fff; }
+.ui-guide-close {
+  appearance: none; cursor: pointer; width: 30px; height: 30px;
+  background: transparent; color: #b8b8d0; border: 1px solid #2e2e58; border-radius: 6px; font-size: 18px; line-height: 1;
+}
+.ui-guide-close:hover { color: #fff; border-color: #5a5a98; }
+.ui-guide-intro { margin: 0; color: #a0a0bc; }
+.ui-guide-search {
+  width: 100%; box-sizing: border-box; padding: 8px 10px;
+  background: #16162c; color: #fff; border: 1px solid #2e2e58; border-radius: 6px;
+  font: inherit;
+}
+.ui-guide-search:focus { border-color: #6a6ab8; outline: none; }
+.ui-guide-list { flex: 1; min-height: 0; overflow-y: auto; margin: 0 -18px; padding: 0 18px 24px; }
+.ui-guide-group {
+  margin: 18px 0 8px; padding: 0;
+  font-size: 12px; font-weight: 700; color: #8a8ab0; letter-spacing: 0.3px; text-transform: none;
+}
+.ui-guide-item {
+  margin-bottom: 8px; padding: 10px 12px;
+  background: #16162c; border: 1px solid #24244a; border-radius: 8px;
+}
+.ui-guide-item.flash { animation: ui-guide-flash 1.6s ease; }
+@keyframes ui-guide-flash { 0%, 50% { border-color: #8ab4ff; background: #1e2448; } 100% { border-color: #24244a; background: #16162c; } }
+.ui-guide-item-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.ui-guide-item-head b { color: #fff; font-weight: 600; }
+.ui-guide-item p { margin: 5px 0 0; }
+.ui-guide-tag { padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.ui-guide-tag.view  { background: #1c2a3e; color: #8fc1ff; }
+.ui-guide-tag.agent { background: #33290f; color: #f2c25c; }
+.ui-guide-tag.real  { background: #3a1a22; color: #ff9aa8; }
+.ui-guide-tag.setup { background: #24243e; color: #b8b8d8; }
+.ui-guide-go {
+  appearance: none; cursor: pointer; align-self: flex-start; margin-top: 6px; padding: 0;
+  background: none; border: 0; color: #8ab4ff; font: 600 12px 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+.ui-guide-go:hover { text-decoration: underline; }
+.ui-guide-none { color: #a0a0bc; }
